@@ -2,16 +2,23 @@ import dotenv from 'dotenv';
 import Sequelize from 'sequelize';
 
 // Load Config
-dotenv.config({ path: './config.env' });
+dotenv.config({ path: './config/config.env' });
 
-const connection = new Sequelize(
-    'foodreview',
-    'foodreview',
-    'foodreview',
+export const connection = new Sequelize(
+    process.env.MYSQL_DATABASE,
+    process.env.MYSQL_USER,
+    process.env.MYSQL_PASSWORD,
     {
         dialect: 'mysql',
-        host: 'localhost'
+        host: process.env.MYSQL_HOST
     }
 );
 
-export default connection;
+export default async function connect() {
+    try {
+        await connection.authenticate();
+        console.log("Connection has been established successfully.");
+    } catch(error) {
+        console.log("Unable to connect to the database: ", error)
+    }
+};

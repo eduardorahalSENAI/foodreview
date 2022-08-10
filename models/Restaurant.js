@@ -30,7 +30,3 @@ const Restaurant = connection.define(
 );
 
 export default Restaurant;
-
-
-
-
