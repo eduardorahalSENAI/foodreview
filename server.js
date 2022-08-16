@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import connect from './config/db.js'
+import router from './routes/routes.js';
+import bodyParser from 'body-parser';
 
 // Load Config
 dotenv.config({ path: './config/config.env' });
@@ -10,13 +11,7 @@ const server = express();
 const port = process.env.PORT || 5000;
 server.listen(port, console.log("Servidor rodando em " + process.env.NODE_ENV + " na porta " + port + "..."));
 
-// Connect to the database
-connect();
-
 // Routes
-server.get('/', (req, res) => {
-    res.send("Página Inicial")
-});
-server.get('/user', (req, res) => {
-    res.send('Página do Usuário')
-});
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.json());
+server.use(router);
