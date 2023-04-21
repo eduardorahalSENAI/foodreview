@@ -16,8 +16,11 @@
   "author": "Eduardo Rahal",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "expo-cli": "^6.3.2",
     "express": "^4.18.2",
+    "mysql2": "^3.2.3",
+    "sequelize": "^6.31.0",
     "yarn": "^1.22.19"
   },
   "devDependencies": {
