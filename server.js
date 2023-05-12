@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import router from './routes/routes.js';
 import connection from './config/db.js';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 // Carregar as configurações
 
@@ -28,6 +29,7 @@ const testConn = async () => {
 
 testConn();
 
+server.use(cors());
 server.use(bodyParser.urlencoded( { extended: true } ));
 server.use(bodyParser.json());
 server.use(router);
