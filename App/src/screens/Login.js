@@ -11,11 +11,28 @@ const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { height } = useWindowDimensions();
-    const onLoginPressed = () => {
-        alert("Logged in with User " + email + " and " + password);
-        setEmail('');
-        setPassword('');
+    
+    const onLoginPressed = async () => {
+        try {
+            const data = await api.post('/login', {
+                email: email,
+                password: password
+            })
+            if(data.status === 200){
+                localStorage.setItem('token', data.data.token)
+                alert(data.data.message);
+                navigation.navigate('Home')
+            } else {
+                alert('Email ou Senha Inválidos')
+                setPassword('')
+            }
+        } catch (err) {
+            alert('Erro Inesperado!')
+            console.log(err)
+        }
+
     }
+
     return (
         <View style={styles.view}>
             <Image
