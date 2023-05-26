@@ -1,10 +1,26 @@
 import express from 'express';
 import User from "../models/User.js";
+import jwt from 'jsonwebtoken';
+
+const verifyToken = (token, res) => {
+    jwt.verify(
+        token,
+        process.env.JWT_SECRET,
+        (err, authData) => {
+            if (err) {
+                res.sendStatus(403)
+            } else {
+                res.json({authData})
+            }
+        }
+    )
+};
 
 const user = express.Router();
 
-user.get('/', function(req, res) {
-    res.send("Rota de Usuário")
+user.get('/verify', (req, res) => {
+    const token = req.headers['token'];
+    const authData = verifyToken(token, res);
 });
 
 user.post('/register', async (req, res) => {

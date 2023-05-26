@@ -1,31 +1,41 @@
-import React from 'react';
-import { StyleSheet, SafeAreaView } from 'react-native';
+import React, { useContext } from 'react';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import Home from './src/screens/Home';
+import { Context, Provider } from './src/context/dataContext';
+
+import Routes from './src/screens/Routes';
 import Login from './src/screens/Login';
 import RegisterUser from './src/screens/RegisterUser';
+import ValidateToken from './src/screens/ValidateToken';
 
 const Stack = createNativeStackNavigator();
+
 const App = () => {
-  const token = localStorage.getItem('token');
+  const { state } = useContext(Context);
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }} >
-        { token ? (
-            <Stack.Screen name="Home" component={Home} />
+        {state.Loading ? (
+          <Stack.Screen name="ValidateToken" component={ValidateToken} />
+        ) : (
+          state.isLogged ? (
+            <>
+              <Stack.Screen name="ValidateToken" component={ValidateToken} />
+              <Stack.Screen name="Routes" component={Routes} />
+            </>
           ) : (
             <>
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="RegisterUser" component={RegisterUser} />
-              <Stack.Screen name="Home" component={Home} />
             </>
           )
+        )
         }
-        
-        
+
+
       </Stack.Navigator>
     </NavigationContainer>
   )
@@ -35,14 +45,15 @@ const styles = StyleSheet.create({
   App: {
     flex: 1,
     backgroundColor: 'white',
-    flex: 1
   },
 });
 
 export default () => {
   return (
-    <SafeAreaProvider>
-      <App />
-    </SafeAreaProvider>
+    <Provider>
+      <SafeAreaProvider>
+        <App />
+      </SafeAreaProvider>
+    </Provider>
   );
 };

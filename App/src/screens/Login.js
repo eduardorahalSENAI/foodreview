@@ -1,37 +1,37 @@
-import {
-    StyleSheet, TouchableOpacity, View, Image, useWindowDimensions, Text
-} from "react-native";
-import React, { useState } from 'react';
+import { StyleSheet, TouchableOpacity, View, Image, useWindowDimensions, Text, TextInput } from "react-native";
+import React, { useState, useContext } from 'react';
 import Logo from '../assets/images/logo.png';
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
-import api from "../api";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../api';
+import { Context } from '../context/dataContext';
 
 const Login = ({ navigation }) => {
+    const { dispatch } = useContext(Context);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { height } = useWindowDimensions();
-    
+
     const onLoginPressed = async () => {
         try {
-            const data = await api.post('/login', {
+            const authData = await api.post('/login', {
                 email: email,
                 password: password
             })
-            if(data.status === 200){
-                localStorage.setItem('token', data.data.token)
-                alert(data.data.message);
-                navigation.navigate('Home')
+            if(authData.status === 200){
+                await AsyncStorage.setItem('token', authData.data.token)
+                dispatch({type:'logIn', payload: true})
             } else {
                 alert('Email ou Senha Inválidos')
                 setPassword('')
             }
-        } catch (err) {
-            alert('Erro Inesperado!')
-            console.log(err)
+        } catch (error) {
+            alert('Email ou Senha Inválidos')
+            setPassword('')
         }
-
     }
+
+    const { height } = useWindowDimensions();
 
     return (
         <View style={styles.view}>
@@ -40,19 +40,22 @@ const Login = ({ navigation }) => {
                 style={[styles.logo, { height: height * 0.3 }]}
                 resizeMode="contain"
             />
+
             <CustomInput
                 placeholder="Email"
                 value={email}
                 setValue={setEmail}
-                secureTextEntry={false}
             />
+
             <CustomInput
                 placeholder="Password"
                 value={password}
                 setValue={setPassword}
                 secureTextEntry={true}
             />
+
             <CustomButton text="Login" onPress={onLoginPressed} />
+
             <TouchableOpacity
                 onPress={() => navigation.navigate("RegisterUser")}
             >
@@ -63,9 +66,11 @@ const Login = ({ navigation }) => {
                     </Text>
                 </Text>
             </TouchableOpacity>
+
         </View>
     )
 };
+
 const styles = StyleSheet.create({
     view: {
         alignItems: 'center',
@@ -81,4 +86,5 @@ const styles = StyleSheet.create({
         color: "#6200ee",
     },
 });
+
 export default Login;
